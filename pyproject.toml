@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "base-qt"
+version = "0.1.0"
+description = "Qt base library"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "Your Name" }
+]
+dependencies = [
+]
+
+[tool.setuptools]
+packages = ["base_qt"]
