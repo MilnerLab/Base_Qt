@@ -1,0 +1,8 @@
+from typing import List, Protocol
+
+from base_qt.views.registry.models import ViewSpec
+
+
+class IViewRegistry(Protocol):
+    def register(self, spec: ViewSpec) -> None: ...
+    def list(self) -> List[ViewSpec]: ...
