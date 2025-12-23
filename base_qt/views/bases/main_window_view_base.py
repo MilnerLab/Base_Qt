@@ -4,8 +4,10 @@ from typing import Generic, Optional, TypeVar
 
 from PySide6.QtWidgets import QMainWindow, QMenuBar, QWidget
 
+from base_qt.views.registry.enums import ViewKind
+from base_qt.views.registry.interfaces import IViewRegistry
+
 from .bindable import BindableMixin
-from base_qt.shell.view_specs import IViewRegistry, ViewKind
 
 VM = TypeVar("VM")
 
@@ -31,10 +33,18 @@ class MainWindowViewBase(QMainWindow, BindableMixin[VM], Generic[VM]):
 
         self.setWindowTitle(title)
         self._install_menubar_from_registry()
-
+        
+        self._central = QWidget(self)
+        self.setCentralWidget(self._central)
+        
         self.build_ui()
         self.bind()
-
+        
+    @property
+    def central(self) -> QWidget:
+        """Central placeholder widget that derived classes can populate."""
+        return self._central
+    
     def _install_menubar_from_registry(self) -> None:
         specs = [s for s in self._registry.list() if s.kind == ViewKind.MENUBAR]
 

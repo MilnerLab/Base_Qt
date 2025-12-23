@@ -10,3 +10,4 @@ class ViewKind(Enum):
     DOCK = auto()     # QDockWidget
     DIALOG = auto()   # modal dialog (opened via action)
     POPOUT = auto()   # modeless window (opened via action)
+    MENUBAR = auto()   
