@@ -2,8 +2,8 @@
 from dataclasses import dataclass
 from typing import Callable, Optional
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QWidget
 
+from base_qt.views.bases.view_base import ViewBase
 from base_qt.views.registry.enums import ViewKind
 
 
@@ -18,6 +18,6 @@ class ViewSpec:
     id: str
     title: str
     kind: ViewKind
-    factory: Callable[[], QWidget]
+    factory: Callable[[], ViewBase]
     icon: Optional[QIcon] = None
     order: int = 0
