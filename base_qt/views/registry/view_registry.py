@@ -14,3 +14,9 @@ class ViewRegistry(IViewRegistry):
 
     def list(self) -> List[ViewSpec]:
         return sorted(self._specs, key=lambda s: (s.order, s.title.lower()))
+
+    def get(self, view_id: str) -> ViewSpec:
+        for s in self._specs:
+            if s.id == view_id:
+                return s
+        raise KeyError(f"Unknown ViewSpec id: {view_id!r}")
