@@ -28,9 +28,9 @@ class MainWindowViewBase(QMainWindow, BindableMixin[VM], Generic[VM]):
         title: str = "App",
     ) -> None:
         QMainWindow.__init__(self, parent)
-        self.__init_bindable__(vm)
         self._registry = registry
-
+        self.__init_bindable__(vm)
+        
         self.setWindowTitle(title)
         self._install_menubar_from_registry()
         
@@ -40,10 +40,17 @@ class MainWindowViewBase(QMainWindow, BindableMixin[VM], Generic[VM]):
         self.build_ui()
         self.bind()
         
+        
+        
+        
+        
     @property
     def central(self) -> QWidget:
         """Central placeholder widget that derived classes can populate."""
         return self._central
+    
+    def build_ui():
+        pass
     
     def _install_menubar_from_registry(self) -> None:
         specs = [s for s in self._registry.list() if s.kind == ViewKind.MENUBAR]
