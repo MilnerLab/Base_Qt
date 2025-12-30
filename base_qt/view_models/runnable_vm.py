@@ -28,6 +28,6 @@ class RunnableVMBase(ThreadSafeVMBase, Generic[TService]):
     def reset(self) -> None:
         self._engine.reset()
         
-    def disconnect(self):
+    def on_disconnect(self):
         self.stop()
-        super().disconnect()
+        super().on_disconnect()

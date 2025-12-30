@@ -1,11 +1,11 @@
 from PySide6.QtCore import QObject
 
 class VMBase(QObject):
-    def connect(self):
-        pass
+    def on_connect(self):
+        self.connect()
     
-    def disconnect(self):
-        pass
+    def on_disconnect(self):
+        self.disconnect()
     
     def dispose(self) -> None:
-        self.disconnect()
+        self.on_disconnect()

@@ -33,6 +33,6 @@ class ThreadSafeVMBase(VMBase):
         unsub = self._bus.subscribe(topic, handler)
         self._cleanup.add(unsub)
 
-    def disconnect(self) -> None:
+    def on_disconnect(self) -> None:
         self._cleanup.clear()
-        super().disconnect()
+        super().on_disconnect()
