@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import Generic, TypeVar
 
 from base_core.framework.domain.interfaces import IRunnable
-from base_qt.view_models.runnable_vm import IUiDispatcher  
 from .thread_safe_vm_base import ThreadSafeVMBase
 from base_core.framework.events.event_bus import EventBus
+from base_qt.app.interfaces import IUiDispatcher
 
 TService = TypeVar("TService", bound=IRunnable)
 
