@@ -1,21 +1,33 @@
-from base_core.framework.events import EventBus
-from base_qt.view_models.thread_safe_vm_base import ThreadSafeVMBase
-from base_qt.app.interfaces import IUiDispatcher
+from __future__ import annotations
+
+from typing import Generic, TypeVar
+
 from base_core.framework.domain.interfaces import IRunnable
-from base_core.framework.services.runnable_service_base import RunnableServiceBase
+from base_qt.view_models.runnable_vm import IUiDispatcher  
+from .thread_safe_vm_base import ThreadSafeVMBase
+from base_core.framework.events.event_bus import EventBus
+
+TService = TypeVar("TService", bound=IRunnable)
 
 
-class RunnableVMBase(ThreadSafeVMBase, IRunnable):
-    
-    def __init__(self, engine_service: RunnableServiceBase, ui: IUiDispatcher, bus: EventBus):
+class RunnableVMBase(ThreadSafeVMBase, Generic[TService]):
+    def __init__(self, engine_service: TService, ui: IUiDispatcher, bus: EventBus):
         super().__init__(ui, bus)
-        self._engine = engine_service
-    
-    def run(self) -> None:
+        self._engine: TService = engine_service
+
+    @property
+    def engine(self) -> TService:
+        return self._engine
+
+    def start(self) -> None:
         self._engine.start()
-        
+
     def stop(self) -> None:
         self._engine.stop()
-        
+
     def reset(self) -> None:
         self._engine.reset()
+        
+    def disconnect(self):
+        self.stop()
+        super().disconnect()
