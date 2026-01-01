@@ -1,5 +1,6 @@
 from __future__ import annotations
-from typing import Generic, TypeVar
+from abc import abstractmethod
+from typing import Generic, Optional, TypeVar
 
 from base_qt.app.qt_cleanup_collection import QtCleanupCollection
 
@@ -16,6 +17,11 @@ class BindableMixin(Generic[VM]):
     def vm(self) -> VM:
         return self._vm
 
+    @classmethod
+    @abstractmethod
+    def id(cls) -> str:
+        ...
+    
     def bind(self) -> None:
         if self._bound:
             return
