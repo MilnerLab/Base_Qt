@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "base-qt"
 version = "0.1.0"
 description = "Qt adapters and reusable UI helpers for base_core."
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
   "PySide6>=6.6",
   "base_core",   
