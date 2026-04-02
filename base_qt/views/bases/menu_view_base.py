@@ -50,16 +50,7 @@ class MenuViewBase(QMenuBar, BindableMixin[VM], Generic[VM]):
     def bind(self) -> None:
         super().bind()
         if self._act_exit is not None:
-            self._act_exit.triggered.connect(QApplication.quit)
-
-    def unbind(self) -> None:
-        if self._act_exit is not None:
-            try:
-                self._act_exit.triggered.disconnect(QApplication.quit)
-            except (TypeError, RuntimeError):
-                # already disconnected or object destroyed
-                pass
-        super().unbind()
+            self.connect_binding(self._act_exit.triggered, QApplication.quit)
 
 
     @property

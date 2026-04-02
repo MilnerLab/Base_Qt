@@ -1,0 +1,58 @@
+/* ui/theme/base.qss */
+
+/* typography baseline */
+QWidget {
+  font-size: 13px;
+}
+
+/* Section headers / helper labels */
+QLabel[role="section_title"] {
+  font-size: 16px;
+  font-weight: 600;
+}
+QLabel[role="muted"] { }
+QLabel[role="error"] {
+  font-size: 12px;
+}
+
+/* Card container */
+QFrame#Card {
+  border-width: @border_w@px;
+  border-style: solid;
+  border-radius: @r_l@px;
+}
+
+/* Inputs */
+QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit, QPlainTextEdit {
+  min-height: @control_h@px;
+  padding-left: @s@px;
+  padding-right: @s@px;
+  border-width: @border_w@px;
+  border-style: solid;
+  border-radius: @r_m@px;
+}
+
+/* Buttons */
+QPushButton, QToolButton {
+  min-height: @control_h@px;
+  padding-left: @m@px;
+  padding-right: @m@px;
+  border-width: @border_w@px;
+  border-style: solid;
+  border-radius: @r_m@px;
+}
+
+/* Role variants: only structural changes here */
+QPushButton[role="primary"], QToolButton[role="primary"] {
+  font-weight: 600;
+  border-width: 0px;
+}
+QPushButton[role="danger"], QToolButton[role="danger"] {
+  font-weight: 600;
+  border-width: 0px;
+}
+
+QAbstractButton#ToggleSwitch {
+  min-width: 56px;
+  min-height: 28px;
+}

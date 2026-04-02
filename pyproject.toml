@@ -14,3 +14,6 @@ dependencies = [
 
 [tool.setuptools]
 packages = ["base_qt"]
+
+[tool.setuptools.package-data]
+base_qt = ["ui/theme/*.qss"]
