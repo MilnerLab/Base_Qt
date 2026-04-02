@@ -1,0 +1,82 @@
+/* ui/theme/light.qss */
+
+QWidget {
+  color: rgba(0,0,0,230);
+}
+
+QMainWindow, QDialog {
+  background-color: #F6F7FB;
+}
+
+QFrame#Card {
+  background-color: #FFFFFF;
+  border-color: rgba(0,0,0,30);
+}
+
+QLabel[role="muted"] {
+  color: rgba(0,0,0,150);
+}
+
+QLabel[role="error"] {
+  color: rgba(220,60,60,230);
+}
+
+/* Inputs */
+QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit, QPlainTextEdit {
+  background-color: #FFFFFF;
+  border-color: rgba(0,0,0,55);
+  color: rgba(0,0,0,230);
+}
+
+QLineEdit:focus, QSpinBox:focus, QDoubleSpinBox:focus, QComboBox:focus, QTextEdit:focus, QPlainTextEdit:focus {
+  border-color: rgba(30, 120, 255, 180);
+}
+
+QLineEdit:disabled, QSpinBox:disabled, QDoubleSpinBox:disabled, QComboBox:disabled, QTextEdit:disabled, QPlainTextEdit:disabled {
+  color: rgba(0,0,0,120);
+  background-color: rgba(0,0,0,12);
+  border-color: rgba(0,0,0,30);
+}
+
+/* Buttons */
+QPushButton, QToolButton {
+  background-color: #FFFFFF;
+  border-color: rgba(0,0,0,55);
+  color: rgba(0,0,0,230);
+}
+
+QPushButton:hover, QToolButton:hover { background-color: rgba(0,0,0,6); }
+QPushButton:pressed, QToolButton:pressed { background-color: rgba(0,0,0,10); }
+
+QPushButton:disabled, QToolButton:disabled {
+  color: rgba(0,0,0,120);
+  background-color: rgba(0,0,0,12);
+  border-color: rgba(0,0,0,30);
+}
+
+QPushButton[role="primary"], QToolButton[role="primary"] {
+  color: #FFFFFF;
+  background-color: rgba(30,120,255,220);
+}
+
+QPushButton[role="danger"], QToolButton[role="danger"] {
+  color: #FFFFFF;
+  background-color: rgba(220,60,60,220);
+}
+
+/* default colors for ToggleSwitch */
+QAbstractButton#ToggleSwitch {
+  qproperty-trackOff: rgba(230,230,230,255);
+  qproperty-trackBorder: rgba(0,0,0,55);
+  qproperty-thumbFill: rgba(255,255,255,255);
+  qproperty-thumbBorder: rgba(0,0,0,55);
+  qproperty-textOn: rgba(255,255,255,255);
+  qproperty-textOff: rgba(0,0,0,140);
+  qproperty-trackDisabled: rgba(0,0,0,12);
+  qproperty-textDisabled: rgba(0,0,0,120);
+  qproperty-thumbDisabled: rgba(255,255,255,220);
+}
+
+/* role decides ON color */
+QAbstractButton#ToggleSwitch[role="primary"] { qproperty-trackOn: rgba(30,120,255,220); }
+QAbstractButton#ToggleSwitch[role="danger"]  { qproperty-trackOn: rgba(220,60,60,220); }

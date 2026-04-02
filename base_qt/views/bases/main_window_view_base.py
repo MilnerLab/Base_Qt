@@ -49,7 +49,7 @@ class MainWindowViewBase(QMainWindow, BindableMixin[VM], Generic[VM]):
         """Central placeholder widget that derived classes can populate."""
         return self._central
     
-    def build_ui():
+    def build_ui(self):
         pass
     
     def _install_menubar_from_registry(self) -> None:
