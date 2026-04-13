@@ -3,15 +3,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, Generic, Optional, TypeVar
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QDockWidget, QMainWindow, QMenuBar, QWidget
 
-from base_qt.view_models.main_window_view_model_base import MainWindowViewModelBase
-from base_qt.views.bases.main_window_view_base import ManagedDockWidget
 from base_qt.views.registry.enums import ViewKind
 from base_qt.views.registry.interfaces import IViewRegistry
 from base_qt.views.registry.models import DockConfig, ViewSpec, PopoutConfig
+
 
 from .bindable import VM, BindableMixin
 

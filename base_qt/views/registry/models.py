@@ -41,10 +41,8 @@ class ViewSpec:
     order: int = 0
 
     def __post_init__(self) -> None:
-        if not self.id.strip():
-            raise ValueError("ViewSpec id cannot be empty.")
-
-        if not self.title.strip():
+        
+        if self.title is None or not self.title.strip():
             raise ValueError("ViewSpec title cannot be empty.")
 
         if self.kind == ViewKind.DOCK and not isinstance(self.view_config, DockConfig):
