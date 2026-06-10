@@ -26,7 +26,7 @@ class Panel(QWidget):
 
     def __init__(self, title: str, vm: PanelVM, parent: QWidget | None = None) -> None:
         super().__init__(parent)
-        self.vm = vm
+        self.__dict__["vm"] = vm
         self._sigs: list[tuple] = []
 
         root = QVBoxLayout(self)
@@ -45,6 +45,10 @@ class Panel(QWidget):
 
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setup()
+
+    @property
+    def vm(self) -> PanelVM:
+        return self.__dict__["vm"]
 
     def setup(self) -> None:
         """Override: create and add widgets to self.body_layout."""
