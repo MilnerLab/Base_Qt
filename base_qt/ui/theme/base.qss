@@ -56,3 +56,35 @@ QAbstractButton#ToggleSwitch {
   min-width: 56px;
   min-height: 28px;
 }
+
+/* Panel header strip */
+QLabel#panel_header {
+  font-weight: 600;
+  font-size: 12px;
+  padding: @s@px @m@px;
+  border-bottom-width: @border_w@px;
+  border-bottom-style: solid;
+}
+
+/* Menubar status area */
+QLabel#status_dot {
+  border-radius: 4px;
+}
+
+QLabel#status_text {
+  font-size: 12px;
+}
+
+QLabel#status_counter {
+  font-size: 11px;
+  min-width: 28px;
+}
+
+QToolButton#status_nav_btn {
+  font-size: 11px;
+  min-width: 18px;
+  min-height: 18px;
+  padding: 0px 2px;
+  border-radius: @r_s@px;
+  border: none;
+}

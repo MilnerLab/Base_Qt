@@ -78,3 +78,27 @@ QAbstractButton#ToggleSwitch {
 
 QAbstractButton#ToggleSwitch[role="primary"] { qproperty-trackOn: rgba(30,120,255,220); }
 QAbstractButton#ToggleSwitch[role="danger"]  { qproperty-trackOn: rgba(220,60,60,220); }
+
+/* Panel header */
+QLabel#panel_header {
+  color: rgba(255,255,255,180);
+  background-color: rgba(255,255,255,5);
+  border-bottom-color: rgba(255,255,255,15);
+}
+
+/* Menubar status */
+QLabel#status_dot { background: transparent; }
+QLabel#status_dot[level="info"]    { background: rgba(80,200,120,220); }
+QLabel#status_dot[level="warning"] { background: rgba(255,180,0,220); }
+QLabel#status_dot[level="error"]   { background: rgba(255,80,80,220); }
+
+QLabel#status_text { color: rgba(255,255,255,120); }
+QLabel#status_text[level="warning"] { color: rgba(255,180,0,220); }
+QLabel#status_text[level="error"]   { color: rgba(255,80,80,220); font-weight: 600; }
+
+QLabel#status_counter { color: rgba(255,255,255,100); }
+
+QToolButton#status_nav_btn { color: rgba(255,255,255,160); background: transparent; }
+QToolButton#status_nav_btn:hover   { background: rgba(255,255,255,10); }
+QToolButton#status_nav_btn:pressed { background: rgba(255,255,255,15); }
+QToolButton#status_nav_btn:disabled { color: rgba(255,255,255,40); }
