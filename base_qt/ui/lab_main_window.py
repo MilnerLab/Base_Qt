@@ -75,6 +75,8 @@ class LabMainWindow(QMainWindow):
         title: str,
         widget: QWidget,
         area: Qt.DockWidgetArea = Qt.DockWidgetArea.LeftDockWidgetArea,
+        *,
+        floating: bool = False,
     ) -> QDockWidget:
         """
         Wrap widget in a dock, add it to the window, and add a checkable
@@ -88,7 +90,20 @@ class LabMainWindow(QMainWindow):
             | QDockWidget.DockWidgetFeature.DockWidgetFloatable
             | QDockWidget.DockWidgetFeature.DockWidgetClosable
         )
+        # When a dock is floating, give it Qt.Window type so Linux/XCB can
+        # move it without hitting the "mouse grab only for popups" restriction.
+        def _on_top_level_changed(is_floating: bool) -> None:
+            if is_floating:
+                dock.setWindowFlags(Qt.WindowType.Window)
+                dock.show()
+
+        dock.topLevelChanged.connect(_on_top_level_changed)
+
         self.addDockWidget(area, dock)
+        if floating:
+            dock.setFloating(True)
+            dock.setWindowFlags(Qt.WindowType.Window)
+            dock.show()
         self._menu_panels.addAction(dock.toggleViewAction())
         return dock
 
