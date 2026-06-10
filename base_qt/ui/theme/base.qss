@@ -66,6 +66,15 @@ QLabel#panel_header {
   border-bottom-style: solid;
 }
 
+/* PanelPopout title bar */
+QWidget#popout_header {
+  font-weight: 600;
+  font-size: 12px;
+  min-height: @xl@px;
+  border-bottom-width: @border_w@px;
+  border-bottom-style: solid;
+}
+
 /* Menubar status area */
 QLabel#status_dot {
   border-radius: 4px;
