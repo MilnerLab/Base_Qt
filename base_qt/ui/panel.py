@@ -43,7 +43,6 @@ class Panel(QWidget):
         self.body_layout.setSpacing(8)
         root.addWidget(self.body, stretch=1)
 
-        self.setAttribute(Qt.WA_DeleteOnClose)
         self.setup()
 
     @property
