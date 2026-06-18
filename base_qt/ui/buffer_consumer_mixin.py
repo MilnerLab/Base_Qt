@@ -1,8 +1,13 @@
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import ClassVar, Protocol, runtime_checkable
 
-from base_core.framework.subprocess.shared_memory.buffer_output import BufferOutput
+
+@runtime_checkable
+class BufferOutput(Protocol):
+    def register_consumer(self, consumer_id: str) -> None: ...
+    def unregister_consumer(self, consumer_id: str) -> None: ...
+
 
 
 class BufferConsumerMixin:
