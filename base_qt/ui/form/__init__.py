@@ -1,4 +1,5 @@
 from base_qt.ui.form.config_form import ConfigForm
+from base_qt.ui.form.dirty_form import DirtyForm
 from base_qt.ui.form.specs import (
     AngleSpec,
     BoolSpec,
@@ -16,6 +17,7 @@ from base_qt.ui.form.specs import (
 
 __all__ = [
     "ConfigForm",
+    "DirtyForm",
     "FieldSpec",
     "FloatSpec",
     "IntSpec",

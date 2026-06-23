@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Callable
 
 from PySide6.QtWidgets import (
     QCheckBox,
@@ -40,6 +40,10 @@ class FieldSpec(ABC):
     @abstractmethod
     def get_value(self, widget: QWidget) -> Any: ...
 
+    @abstractmethod
+    def connect_change(self, widget: QWidget, slot: Callable[[], None]) -> None:
+        """Connect the widget's change signal(s) to slot."""
+
 
 class FloatSpec(FieldSpec):
     def __init__(
@@ -73,6 +77,9 @@ class FloatSpec(FieldSpec):
     def get_value(self, widget: QDoubleSpinBox) -> float:  # type: ignore[override]
         return widget.value()
 
+    def connect_change(self, widget: QDoubleSpinBox, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.valueChanged.connect(lambda _: slot())
+
 
 class IntSpec(FieldSpec):
     def __init__(self, label: str, min: int, max: int, step: int = 1) -> None:
@@ -93,6 +100,9 @@ class IntSpec(FieldSpec):
     def get_value(self, widget: QSpinBox) -> int:  # type: ignore[override]
         return widget.value()
 
+    def connect_change(self, widget: QSpinBox, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.valueChanged.connect(lambda _: slot())
+
 
 class BoolSpec(FieldSpec):
     def create_widget(self) -> QCheckBox:
@@ -103,6 +113,9 @@ class BoolSpec(FieldSpec):
 
     def get_value(self, widget: QCheckBox) -> bool:  # type: ignore[override]
         return widget.isChecked()
+
+    def connect_change(self, widget: QCheckBox, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.checkStateChanged.connect(lambda _: slot())
 
 
 class AngleSpec(FieldSpec):
@@ -118,6 +131,9 @@ class AngleSpec(FieldSpec):
 
     def get_value(self, widget: AngleControl) -> Angle:  # type: ignore[override]
         return widget.get_angle()
+
+    def connect_change(self, widget: AngleControl, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.value_changed.connect(lambda _: slot())
 
 
 class LengthSpec(FieldSpec):
@@ -150,6 +166,9 @@ class LengthSpec(FieldSpec):
     def get_value(self, widget: LengthControl) -> Length:  # type: ignore[override]
         return widget.get_length()
 
+    def connect_change(self, widget: LengthControl, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.value_changed.connect(lambda _: slot())
+
 
 class TimeSpec(FieldSpec):
     def __init__(
@@ -174,6 +193,9 @@ class TimeSpec(FieldSpec):
 
     def get_value(self, widget: TimeControl) -> Time:  # type: ignore[override]
         return widget.get_time()
+
+    def connect_change(self, widget: TimeControl, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.value_changed.connect(lambda _: slot())
 
 
 class FrequencySpec(FieldSpec):
@@ -200,6 +222,9 @@ class FrequencySpec(FieldSpec):
     def get_value(self, widget: FrequencyControl) -> Frequency:  # type: ignore[override]
         return widget.get_frequency()
 
+    def connect_change(self, widget: FrequencyControl, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.value_changed.connect(lambda _: slot())
+
 
 class MassSpec(FieldSpec):
     def __init__(
@@ -224,6 +249,9 @@ class MassSpec(FieldSpec):
 
     def get_value(self, widget: MassControl) -> Mass:  # type: ignore[override]
         return widget.get_mass()
+
+    def connect_change(self, widget: MassControl, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.value_changed.connect(lambda _: slot())
 
 
 class PowerSpec(FieldSpec):
@@ -250,6 +278,9 @@ class PowerSpec(FieldSpec):
     def get_value(self, widget: PowerControl) -> Power:  # type: ignore[override]
         return widget.get_power()
 
+    def connect_change(self, widget: PowerControl, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.value_changed.connect(lambda _: slot())
+
 
 class EnumSpec(FieldSpec):
     def __init__(self, label: str, enum_type: type) -> None:
@@ -270,6 +301,9 @@ class EnumSpec(FieldSpec):
 
     def get_value(self, widget: QComboBox) -> Any:  # type: ignore[override]
         return widget.currentData()
+
+    def connect_change(self, widget: QComboBox, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.currentIndexChanged.connect(lambda _: slot())
 
 
 class _RangeWidget(QWidget):
@@ -307,3 +341,7 @@ class RangeSpec(FieldSpec):
             self._inner.get_value(widget.min_widget),
             self._inner.get_value(widget.max_widget),
         )
+
+    def connect_change(self, widget: _RangeWidget, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        self._inner.connect_change(widget.min_widget, slot)
+        self._inner.connect_change(widget.max_widget, slot)

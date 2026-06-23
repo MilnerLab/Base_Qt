@@ -4,6 +4,7 @@ import math
 from abc import abstractmethod
 from typing import Generic, TypeVar
 
+from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QComboBox, QDoubleSpinBox, QHBoxLayout, QLabel, QWidget
 
 from base_core.quantities.enums import Prefix
@@ -49,6 +50,8 @@ class PrefixedControl(QWidget, Generic[T]):
     Switching prefix rescales the displayed number so the physical value is preserved.
     """
 
+    value_changed = Signal(float)
+
     def __init__(
         self,
         unit_label: str,
@@ -85,6 +88,7 @@ class PrefixedControl(QWidget, Generic[T]):
         self._update_range()
 
         self._combo.currentIndexChanged.connect(self._on_prefix_changed)
+        self._spinbox.valueChanged.connect(self.value_changed)
 
     @abstractmethod
     def _make(self, value: float, prefix: Prefix) -> T:

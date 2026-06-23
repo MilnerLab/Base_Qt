@@ -1,5 +1,4 @@
 from base_qt.ui.app_message import AppMessage, MessageLevel
-from base_qt.ui.buffer_consumer_mixin import BufferConsumerMixin
 from base_qt.ui.controls import AngleControl, LengthControl
 from base_qt.ui.form import (
     AngleSpec,
