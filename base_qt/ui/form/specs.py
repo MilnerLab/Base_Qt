@@ -17,10 +17,12 @@ from base_core.math.enums import AngleUnit
 from base_core.math.models import Angle, Range
 from base_core.quantities.enums import Prefix
 from base_core.quantities.models import Frequency, Length, Mass, Power, Time
+from base_core.quantities.specific_models import GDD
 from base_qt.ui.controls.angle_control import AngleControl
 from base_qt.ui.controls.length_control import LengthControl
 from base_qt.ui.controls.quantity_controls import (
     FrequencyControl,
+    GDDControl,
     MassControl,
     PowerControl,
     TimeControl,
@@ -195,6 +197,35 @@ class TimeSpec(FieldSpec):
         return widget.get_time()
 
     def connect_change(self, widget: TimeControl, slot: Callable[[], None]) -> None:  # type: ignore[override]
+        widget.value_changed.connect(lambda _: slot())
+
+
+class GDDSpec(FieldSpec):
+    def __init__(
+        self,
+        label: str,
+        default_prefix: Prefix = Prefix.PICO,
+        allowed_prefixes: list[Prefix] | None = None,
+        min: float | None = None,
+        max: float | None = None,
+    ) -> None:
+        super().__init__(label)
+        self._default_prefix = default_prefix
+        self._allowed_prefixes = allowed_prefixes
+        # Store bounds in s^2; min/max are given in default_prefix^2 units.
+        self._min_s2 = min * float(default_prefix) ** 2 if min is not None else -1e18
+        self._max_s2 = max * float(default_prefix) ** 2 if max is not None else 1e18
+
+    def create_widget(self) -> GDDControl:
+        return GDDControl(self._default_prefix, self._allowed_prefixes, self._min_s2, self._max_s2)
+
+    def set_value(self, widget: GDDControl, value: GDD) -> None:  # type: ignore[override]
+        widget.set_gdd(value)
+
+    def get_value(self, widget: GDDControl) -> GDD:  # type: ignore[override]
+        return widget.get_gdd()
+
+    def connect_change(self, widget: GDDControl, slot: Callable[[], None]) -> None:  # type: ignore[override]
         widget.value_changed.connect(lambda _: slot())
 
 
