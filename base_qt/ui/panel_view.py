@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from PySide6.QtCore import QPoint, Qt
+from PySide6.QtCore import QPoint, Qt, Signal
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import (
     QFrame,
@@ -11,27 +11,38 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from base_qt.ui.panel_view_model import PanelViewModel
 
-class PanelPopout(QFrame):
+
+class PanelView(QFrame):
     """
     A draggable floating widget overlaid on a parent panel.
 
     Unlike QDialog, this is a child QWidget (not a top-level OS window), so
-    the WM never takes over dragging and the popout is naturally constrained
+    the WM never takes over dragging and the view is naturally constrained
     to the parent panel's bounds.
 
     Subclasses add their content to self.body_layout:
 
-        class MyPopout(PanelPopout):
+        class MyView(PanelView):
             def __init__(self, parent: QWidget) -> None:
                 super().__init__("My Title", parent)
                 self.body_layout.addWidget(...)
 
     Call open() to show it centered in the parent.
+
+    Pass ``vm=`` for views constructed via a container factory (e.g. through
+    ``ViewHost``): closing then calls ``vm.on_close()`` and destroys the
+    widget, so the next ``ViewHost.open()`` rebuilds a fresh View/ViewModel
+    pair. Views embedded inline with a borrowed, longer-lived VM (e.g.
+    ``PhaseConfigView``) should omit ``vm=`` to keep the old hide-only close.
     """
 
-    def __init__(self, title: str, parent: QWidget) -> None:
+    closed = Signal()
+
+    def __init__(self, title: str, parent: QWidget, *, vm: PanelViewModel | None = None) -> None:
         super().__init__(parent)
+        self.__dict__["vm"] = vm
         self.setObjectName("Card")
         self.setAutoFillBackground(True)
         self._drag_offset: QPoint | None = None
@@ -53,7 +64,7 @@ class PanelPopout(QFrame):
         close_btn = QPushButton("✕")
         close_btn.setFixedSize(20, 20)
         close_btn.setFlat(True)
-        close_btn.clicked.connect(self.hide)
+        close_btn.clicked.connect(self._on_close)
         title_row.addWidget(close_btn)
 
         outer.addWidget(self._title_bar)
@@ -66,8 +77,20 @@ class PanelPopout(QFrame):
 
         self.hide()
 
+    @property
+    def vm(self) -> PanelViewModel | None:
+        return self.__dict__.get("vm")
+
+    def _on_close(self) -> None:
+        if self.vm is not None:
+            self.vm.on_close()
+        self.hide()
+        self.closed.emit()
+        if self.vm is not None:
+            self.deleteLater()
+
     def open(self) -> None:
-        """Show the popout centered in the parent and raise it to the front."""
+        """Show the view centered in the parent and raise it to the front."""
         self.adjustSize()
         p = self.parentWidget()
         if p is not None:

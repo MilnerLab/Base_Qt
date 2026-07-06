@@ -11,9 +11,9 @@ class WorkerControlWidget(QWidget):
     """
     Two-button Start / Pause-or-Reset bar that reflects WorkerStatus.
 
-        NEW     → Start ✓   Pause ✗   (second button grayed, labelled "Pause")
-        RUNNING → Start ✗   Pause ✓   (second button active, labelled "Pause")
-        PAUSED  → Start ✓   Reset ✓   (second button relabelled "Reset")
+        NEW     → Start ✓    Pause ✗   (second button grayed, labelled "Pause")
+        RUNNING → Start ✗    Pause ✓   (second button active, labelled "Pause")
+        PAUSED  → Resume ✓   Reset ✓   (first button relabelled "Resume", second "Reset")
         BUSY    → both ✗
 
     Usage:
@@ -62,5 +62,6 @@ class WorkerControlWidget(QWidget):
         paused  = status == WorkerStatus.PAUSED
 
         self._start_btn.setEnabled(not busy and not running)       # NEW or PAUSED
+        self._start_btn.setText("Resume" if paused else "Start")
         self._pause_reset_btn.setEnabled(not busy and status != WorkerStatus.NEW)
         self._pause_reset_btn.setText("Reset" if paused else "Pause")

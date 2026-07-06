@@ -6,7 +6,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QLabel, QVBoxLayout, QWidget
 
-from base_qt.ui.panel_vm import PanelVM
+from base_qt.ui.panel_view_model import PanelViewModel
 
 
 class Panel(QWidget):
@@ -24,7 +24,7 @@ class Panel(QWidget):
                 self._connect(self.vm.some_signal, self._on_something)
     """
 
-    def __init__(self, title: str, vm: PanelVM, parent: QWidget | None = None) -> None:
+    def __init__(self, title: str, vm: PanelViewModel, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.__dict__["vm"] = vm
         self._sigs: list[tuple] = []
@@ -46,7 +46,7 @@ class Panel(QWidget):
         self.setup()
 
     @property
-    def vm(self) -> PanelVM:
+    def vm(self) -> PanelViewModel:
         return self.__dict__["vm"]
 
     def setup(self) -> None:

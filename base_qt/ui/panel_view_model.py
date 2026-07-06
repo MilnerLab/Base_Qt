@@ -10,7 +10,7 @@ from base_qt.app.dispatcher import QtDispatcher
 from base_qt.ui.app_message import AppMessage, MessageLevel
 
 
-class PanelVM(QObject):
+class PanelViewModel(QObject):
     """
     Base VM for a lab panel.
 
@@ -43,10 +43,10 @@ class PanelVM(QObject):
 
 def ui_thread(method: Callable) -> Callable:
     """
-    Decorator: marshals a PanelVM method to the Qt main thread.
+    Decorator: marshals a PanelViewModel method to the Qt main thread.
     The wrapped method runs asynchronously; return values are discarded.
     """
     @wraps(method)
-    def wrapper(self: PanelVM, *args, **kwargs) -> None:
+    def wrapper(self: PanelViewModel, *args, **kwargs) -> None:
         self._post(lambda: method(self, *args, **kwargs))
     return wrapper

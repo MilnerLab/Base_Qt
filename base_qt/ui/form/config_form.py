@@ -12,10 +12,11 @@ from PySide6.QtWidgets import (
 )
 
 from base_qt.ui.form.specs import FieldSpec
-from base_qt.ui.panel_popout import PanelPopout
+from base_qt.ui.panel_view import PanelView
+from base_qt.ui.panel_view_model import PanelViewModel
 
 
-class ConfigForm(PanelPopout):
+class ConfigForm(PanelView):
     """Auto-generated config editor driven by a dataclass instance.
 
     Subclasses declare ``_specs`` mapping field names to FieldSpec instances,
@@ -41,8 +42,8 @@ class ConfigForm(PanelPopout):
     _specs: ClassVar[dict[str, FieldSpec]]
     _groups: ClassVar[list[tuple[str, list[str]]] | None] = None
 
-    def __init__(self, title: str, config: Any, parent: QWidget) -> None:
-        super().__init__(title, parent)
+    def __init__(self, title: str, config: Any, parent: QWidget, *, vm: PanelViewModel | None = None) -> None:
+        super().__init__(title, parent, vm=vm)
         self._config = config
         self._widgets: dict[str, QWidget] = {}
         self._build()

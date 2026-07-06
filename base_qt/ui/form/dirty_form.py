@@ -13,10 +13,11 @@ from PySide6.QtWidgets import (
 
 from base_qt.ui.dirty_indicator import DirtyIndicator
 from base_qt.ui.form.specs import FieldSpec
-from base_qt.ui.panel_popout import PanelPopout
+from base_qt.ui.panel_view import PanelView
+from base_qt.ui.panel_view_model import PanelViewModel
 
 
-class DirtyForm(PanelPopout):
+class DirtyForm(PanelView):
     """Auto-generated config editor with per-field dirty indicators.
 
     Subclasses declare ``_specs`` and optionally ``_groups``, then override
@@ -40,8 +41,8 @@ class DirtyForm(PanelPopout):
     _groups: ClassVar[list[tuple[str, list[str]]] | None] = None
     _readonly_when_running: ClassVar[frozenset[str]] = frozenset()
 
-    def __init__(self, title: str, config: Any, parent: QWidget) -> None:
-        super().__init__(title, parent)
+    def __init__(self, title: str, config: Any, parent: QWidget, *, vm: PanelViewModel | None = None) -> None:
+        super().__init__(title, parent, vm=vm)
         self._config = config
         self._widgets: dict[str, QWidget] = {}
         self._indicators: dict[str, DirtyIndicator] = {}

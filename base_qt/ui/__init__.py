@@ -13,7 +13,7 @@ from base_qt.ui.form import (
 )
 from base_qt.ui.lab_main_window import LabMainWindow
 from base_qt.ui.panel import Panel
-from base_qt.ui.panel_vm import PanelVM, ui_thread
+from base_qt.ui.panel_view_model import PanelViewModel, ui_thread
 from base_qt.ui.panel_window import PanelWindow
 from base_qt.ui.status_area import StatusArea
 from base_qt.ui.status_board import StatusBoard  # available but not auto-wired
@@ -24,7 +24,7 @@ __all__ = [
     "MessageLevel",
     "LabMainWindow",
     "Panel",
-    "PanelVM",
+    "PanelViewModel",
     "PanelWindow",
     "StatusArea",
     "StatusBoard",
