@@ -86,6 +86,28 @@ QLabel#panel_header {
   border-bottom-color: rgba(255,255,255,15);
 }
 
+/* Menu bar & menus (pinned dark so they stay visible regardless of the OS palette) */
+QMenuBar {
+  background-color: #1E1F22;
+  color: rgba(255,255,255,230);
+}
+QMenuBar::item {
+  background: transparent;
+  padding: 4px 10px;
+}
+QMenuBar::item:selected { background-color: rgba(255,255,255,20); }
+QMenuBar::item:pressed  { background-color: rgba(255,255,255,30); }
+
+QMenu {
+  background-color: #2B2D31;
+  color: rgba(255,255,255,230);
+  border: 1px solid rgba(255,255,255,40);
+}
+QMenu::item { padding: 6px 24px; }
+QMenu::item:selected { background-color: rgba(30,120,255,220); color: #FFFFFF; }
+QMenu::item:disabled { color: rgba(255,255,255,120); }
+QMenu::separator { height: 1px; background: rgba(255,255,255,25); margin: 4px 8px; }
+
 /* Menubar status */
 QLabel#status_dot { background: transparent; }
 QLabel#status_dot[level="info"]    { background: rgba(80,200,120,220); }
