@@ -49,12 +49,11 @@ class ConfigForm(PanelView):
         self._build()
         self._populate()
 
-        btn_row = QHBoxLayout()
-        btn_row.addStretch(1)
+        self.footer_layout.addStretch(1)
         apply_btn = QPushButton("Apply")
         apply_btn.clicked.connect(self._apply)
-        btn_row.addWidget(apply_btn)
-        self.body_layout.addLayout(btn_row)
+        self.footer_layout.addWidget(apply_btn)
+        self.footer_widget.setVisible(True)
 
     def _build(self) -> None:
         field_sets = (

@@ -49,12 +49,11 @@ class DirtyForm(PanelView):
         self._build()
         self._populate()
 
-        btn_row = QHBoxLayout()
-        btn_row.addStretch(1)
+        self.footer_layout.addStretch(1)
         self._apply_btn = QPushButton("Apply")
         self._apply_btn.clicked.connect(self._apply)
-        btn_row.addWidget(self._apply_btn)
-        self.body_layout.addLayout(btn_row)
+        self.footer_layout.addWidget(self._apply_btn)
+        self.footer_widget.setVisible(True)
 
     @property
     def apply_button(self) -> QPushButton:
