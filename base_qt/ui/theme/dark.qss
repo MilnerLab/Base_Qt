@@ -21,6 +21,12 @@ QLabel[role="error"] {
   color: rgba(255,120,120,230);
 }
 
+QLabel[role="readout"] {
+  background-color: rgba(255,255,255,10);
+  border-color: rgba(255,255,255,25);
+  color: rgba(255,255,255,190);
+}
+
 /* Inputs */
 QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit, QPlainTextEdit {
   background-color: #2B2D31;
@@ -36,6 +42,50 @@ QLineEdit:disabled, QSpinBox:disabled, QDoubleSpinBox:disabled, QComboBox:disabl
   color: rgba(255,255,255,120);
   background-color: rgba(255,255,255,10);
   border-color: rgba(255,255,255,25);
+}
+
+/* Spin box up/down buttons & arrows */
+QSpinBox::up-button, QDoubleSpinBox::up-button,
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+  background-color: #2B2D31;
+  border-left-color: rgba(255,255,255,40);
+}
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {
+  background-color: rgba(255,255,255,8);
+}
+QSpinBox::up-button:pressed, QDoubleSpinBox::up-button:pressed,
+QSpinBox::down-button:pressed, QDoubleSpinBox::down-button:pressed {
+  background-color: rgba(255,255,255,12);
+}
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+  border-bottom-color: rgba(255,255,255,180);
+}
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+  border-top-color: rgba(255,255,255,180);
+}
+QSpinBox::up-arrow:disabled, QDoubleSpinBox::up-arrow:disabled {
+  border-bottom-color: rgba(255,255,255,60);
+}
+QSpinBox::down-arrow:disabled, QDoubleSpinBox::down-arrow:disabled {
+  border-top-color: rgba(255,255,255,60);
+}
+
+/* Combo box dropdown popup */
+QComboBox QAbstractItemView {
+  background-color: #2B2D31;
+  border-color: rgba(255,255,255,40);
+  color: rgba(255,255,255,230);
+  selection-background-color: rgba(30,120,255,220);
+  selection-color: #FFFFFF;
+}
+QComboBox QAbstractItemView::item:hover {
+  background-color: rgba(30,120,255,220);
+  color: #FFFFFF;
+}
+QComboBox QAbstractItemView::item:selected {
+  background-color: rgba(30,120,255,160);
+  color: #FFFFFF;
 }
 
 /* Buttons */

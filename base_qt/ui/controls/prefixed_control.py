@@ -5,9 +5,10 @@ from abc import abstractmethod
 from typing import Generic, TypeVar
 
 from PySide6.QtCore import Signal
-from PySide6.QtWidgets import QComboBox, QDoubleSpinBox, QHBoxLayout, QLabel, QWidget
+from PySide6.QtWidgets import QComboBox, QDoubleSpinBox, QLabel, QWidget
 
 from base_core.quantities.enums import Prefix
+from base_qt.ui.controls.readout_control import ControlWithReadout
 
 
 PREFIX_SYMBOLS: dict[Prefix, str] = {
@@ -38,7 +39,7 @@ DEFAULT_PREFIXES: list[Prefix] = [
 T = TypeVar("T")
 
 
-class PrefixedControl(QWidget, Generic[T]):
+class PrefixedControl(ControlWithReadout, Generic[T]):
     """
     Spinbox + prefix combo + unit label for any SI-prefix–based quantity.
 
@@ -65,22 +66,19 @@ class PrefixedControl(QWidget, Generic[T]):
         self._prefixes = allowed_prefixes if allowed_prefixes is not None else DEFAULT_PREFIXES
         self._min_base = min_base
         self._max_base = max_base
-
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(4)
+        self._unit_label = unit_label
 
         self._spinbox = QDoubleSpinBox()
         self._spinbox.setDecimals(6)
-        layout.addWidget(self._spinbox, stretch=1)
+        self.input_layout.addWidget(self._spinbox, stretch=1)
 
         self._combo = QComboBox()
         for p in self._prefixes:
             self._combo.addItem(PREFIX_SYMBOLS[p], userData=p)
-        layout.addWidget(self._combo)
+        self.input_layout.addWidget(self._combo)
 
         if unit_label:
-            layout.addWidget(QLabel(unit_label))
+            self.input_layout.addWidget(QLabel(unit_label))
 
         idx = next((i for i, p in enumerate(self._prefixes) if p == default_prefix), 0)
         self._combo.setCurrentIndex(idx)
@@ -104,6 +102,12 @@ class PrefixedControl(QWidget, Generic[T]):
 
     def get_value(self) -> T:
         return self._make(self._spinbox.value(), self._prefix)
+
+    def set_readout(self, quantity: T) -> None:  # type: ignore[override]
+        """Show the live current value, in the currently selected prefix."""
+        display = float(quantity) / self._prefix.value  # type: ignore[arg-type]
+        text = f"{display:.{self._decimals_for(display)}f} {PREFIX_SYMBOLS[self._prefix]}{self._unit_label}"
+        super().set_readout(text)
 
     def _update_range(self) -> None:
         lo = self._min_base / self._prefix.value

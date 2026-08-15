@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from base_qt.ui.controls.readout_control import ControlWithReadout
 from base_qt.ui.form.specs import FieldSpec
 from base_qt.ui.panel_view import PanelView
 from base_qt.ui.panel_view_model import PanelViewModel
@@ -92,3 +93,9 @@ class ConfigForm(PanelView):
 
     def on_apply(self) -> None:
         """Override to trigger side effects after the config is written back."""
+
+    def update_readout(self, name: str, value: Any) -> None:
+        """Push a live device value into a field's read-only readout row."""
+        w = self._widgets.get(name)
+        if isinstance(w, ControlWithReadout):
+            w.set_readout(value)

@@ -5,7 +5,6 @@ from importlib import resources
 from typing import Mapping
 
 from PySide6.QtCore import QSettings
-from PySide6.QtGui import QPalette
 from PySide6.QtWidgets import QApplication
 
 from .tokens import TOKENS, as_qss_replacements
@@ -30,15 +29,11 @@ def _load_qss(filename: str) -> str:
     return resources.files(__package__).joinpath(filename).read_text(encoding="utf-8")
 
 
-def _system_prefers_dark(app: QApplication) -> bool:
-    # Heuristik: wenn Window-Farbe dunkel ist, nehmen wir dark theme
-    col = app.palette().color(QPalette.ColorRole.Window)
-    return col.lightness() < 128
-
-
 def effective_mode(app: QApplication, mode: ThemeMode) -> ThemeMode:
+    # SYSTEM always resolves to DARK: the app intentionally uses the same
+    # dark theme on every machine rather than following the OS preference.
     if mode is ThemeMode.SYSTEM:
-        return ThemeMode.DARK if _system_prefers_dark(app) else ThemeMode.LIGHT
+        return ThemeMode.DARK
     return mode
 
 

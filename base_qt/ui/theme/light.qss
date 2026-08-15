@@ -21,6 +21,12 @@ QLabel[role="error"] {
   color: rgba(220,60,60,230);
 }
 
+QLabel[role="readout"] {
+  background-color: rgba(0,0,0,12);
+  border-color: rgba(0,0,0,30);
+  color: rgba(0,0,0,190);
+}
+
 /* Inputs */
 QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit, QPlainTextEdit {
   background-color: #FFFFFF;
@@ -36,6 +42,50 @@ QLineEdit:disabled, QSpinBox:disabled, QDoubleSpinBox:disabled, QComboBox:disabl
   color: rgba(0,0,0,120);
   background-color: rgba(0,0,0,12);
   border-color: rgba(0,0,0,30);
+}
+
+/* Spin box up/down buttons & arrows */
+QSpinBox::up-button, QDoubleSpinBox::up-button,
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+  background-color: #FFFFFF;
+  border-left-color: rgba(0,0,0,55);
+}
+QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover,
+QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover {
+  background-color: rgba(0,0,0,6);
+}
+QSpinBox::up-button:pressed, QDoubleSpinBox::up-button:pressed,
+QSpinBox::down-button:pressed, QDoubleSpinBox::down-button:pressed {
+  background-color: rgba(0,0,0,10);
+}
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+  border-bottom-color: rgba(0,0,0,180);
+}
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+  border-top-color: rgba(0,0,0,180);
+}
+QSpinBox::up-arrow:disabled, QDoubleSpinBox::up-arrow:disabled {
+  border-bottom-color: rgba(0,0,0,60);
+}
+QSpinBox::down-arrow:disabled, QDoubleSpinBox::down-arrow:disabled {
+  border-top-color: rgba(0,0,0,60);
+}
+
+/* Combo box dropdown popup */
+QComboBox QAbstractItemView {
+  background-color: #FFFFFF;
+  border-color: rgba(0,0,0,55);
+  color: rgba(0,0,0,230);
+  selection-background-color: rgba(30,120,255,220);
+  selection-color: #FFFFFF;
+}
+QComboBox QAbstractItemView::item:hover {
+  background-color: rgba(30,120,255,220);
+  color: #FFFFFF;
+}
+QComboBox QAbstractItemView::item:selected {
+  background-color: rgba(30,120,255,160);
+  color: #FFFFFF;
 }
 
 /* Buttons */

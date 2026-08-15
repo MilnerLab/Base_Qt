@@ -7,9 +7,11 @@ from base_qt.ui.controls.quantity_controls import (
     PowerControl,
     TimeControl,
 )
+from base_qt.ui.controls.readout_control import ControlWithReadout
 
 __all__ = [
     "AngleControl",
+    "ControlWithReadout",
     "FrequencyControl",
     "LengthControl",
     "MassControl",

@@ -5,7 +5,8 @@ from PySide6.QtWidgets import QWidget
 from base_core.quantities.enums import Prefix
 from base_core.quantities.models import Frequency, Mass, Power, Time
 from base_core.quantities.specific_models import GDD
-from base_qt.ui.controls.prefixed_control import PrefixedControl
+from base_qt.ui.controls.prefixed_control import PREFIX_SYMBOLS, PrefixedControl
+from base_qt.ui.controls.readout_control import ControlWithReadout
 
 
 class TimeControl(PrefixedControl[Time]):
@@ -155,3 +156,8 @@ class GDDControl(PrefixedControl[GDD]):
 
     def get_gdd(self) -> GDD:
         return self.get_value()
+
+    def set_readout(self, gdd: GDD) -> None:  # type: ignore[override]
+        display = float(gdd) / (self._prefix.value ** 2)
+        text = f"{display:.{self._decimals_for(display)}f} {PREFIX_SYMBOLS[self._prefix]}{self._unit_label}"
+        ControlWithReadout.set_readout(self, text)

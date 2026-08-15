@@ -14,12 +14,27 @@ QLabel[role="muted"] { }
 QLabel[role="error"] {
   font-size: 12px;
 }
+QLabel[role="readout"] {
+  min-height: @control_h@px;
+  padding-left: @s@px;
+  padding-right: @s@px;
+  border-width: @border_w@px;
+  border-style: solid;
+  border-radius: @r_m@px;
+}
 
 /* Card container */
 QFrame#Card {
   border-width: @border_w@px;
   border-style: solid;
   border-radius: @r_l@px;
+}
+
+/* Scroll areas paint an opaque QPalette::Base background by default; make
+   the area and its auto-created viewport transparent so ancestors (e.g.
+   QFrame#Card) show through instead of a stray light patch. */
+QScrollArea, QScrollArea > QWidget, QScrollArea > QWidget > QWidget {
+  background: transparent;
 }
 
 /* Inputs */
@@ -30,6 +45,57 @@ QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QTextEdit, QPlainTextEdit {
   border-width: @border_w@px;
   border-style: solid;
   border-radius: @r_m@px;
+}
+
+/* Spin box up/down buttons + arrows — needed once QAbstractSpinBox gets a
+   custom border above: Qt then renders these sub-controls itself, and any
+   sub-control left unstyled falls back to native (light) rendering instead
+   of following the stylesheet. */
+QSpinBox::up-button, QDoubleSpinBox::up-button,
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+  subcontrol-origin: border;
+  width: 16px;
+  border-style: solid;
+  border-width: 0px 0px 0px @border_w@px;
+}
+QSpinBox::up-button, QDoubleSpinBox::up-button {
+  subcontrol-position: top right;
+  border-top-right-radius: @r_m@px;
+}
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+  subcontrol-position: bottom right;
+  border-bottom-right-radius: @r_m@px;
+}
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {
+  width: 0px;
+  height: 0px;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-bottom-width: 5px;
+  border-bottom-style: solid;
+}
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {
+  width: 0px;
+  height: 0px;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top-width: 5px;
+  border-top-style: solid;
+}
+
+/* Combo box dropdown popup — QComboBox's own rules above don't reach the
+   popup's QAbstractItemView, which otherwise falls back to Qt's default
+   (unstyled) item palette. */
+QComboBox QAbstractItemView {
+  border-width: @border_w@px;
+  border-style: solid;
+  border-radius: @r_m@px;
+  outline: 0;
+}
+QComboBox QAbstractItemView::item {
+  min-height: @control_h@px;
+  padding-left: @s@px;
+  padding-right: @s@px;
 }
 
 /* Buttons */
