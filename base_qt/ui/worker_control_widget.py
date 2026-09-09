@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Callable
 
-from PySide6.QtWidgets import QHBoxLayout, QPushButton, QSizePolicy, QWidget
+from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy, QWidget
 
+from base_core.ipc.connection_mode import ConnectionMode
 from base_core.ipc.worker_handle import WorkerStatus
 
 
@@ -43,6 +44,20 @@ class WorkerControlWidget(QWidget):
         row.setContentsMargins(0, 0, 0, 0)
         row.setSpacing(4)
 
+        # Sits left of the buttons and stays there for the whole session. A banner that
+        # clears itself is not enough: the operator who takes data an hour after the
+        # demotion is exactly the one who needs to be told the rig is on a fake.
+        self._mode_badge = QLabel("MOCK")
+        # Fixed, like the buttons beside it. Without this the label takes whatever the
+        # host layout offers, and in a header row with no stretch of its own it spreads
+        # across the whole panel.
+        self._mode_badge.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self._mode_badge.setStyleSheet(
+            "QLabel { color: #b8860b; border: 1px solid #b8860b; border-radius: 3px; "
+            "padding: 0px 4px; font-weight: bold; }")
+        self._mode_badge.hide()
+        row.addWidget(self._mode_badge)
+
         self._left_btn = QPushButton("Start")
         self._right_btn = QPushButton("Pause")
 
@@ -66,6 +81,20 @@ class WorkerControlWidget(QWidget):
             self._on_pause()
         else:
             self._on_stop()
+
+    def set_mode(self, mode: ConnectionMode | None, reason: str = "") -> None:
+        """Show or hide the mock badge. Orthogonal to status, and deliberately so.
+
+        A worker can be RUNNING on a mock, and conflating the two would let "running"
+        read as "running on the instrument".
+        """
+        if mode != ConnectionMode.MOCK:
+            self._mode_badge.hide()
+            return
+        self._mode_badge.setToolTip(
+            f"This device is simulated. {reason}".strip() if reason
+            else "This device is simulated — no hardware is connected.")
+        self._mode_badge.show()
 
     def set_status(self, status: WorkerStatus) -> None:
         """Update button states and labels to reflect the current WorkerStatus."""
