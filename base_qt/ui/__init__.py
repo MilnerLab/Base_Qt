@@ -1,9 +1,12 @@
 from base_qt.ui.app_message import AppMessage, MessageLevel
 from base_qt.ui.controls import AngleControl, LengthControl
+from base_qt.ui.device_frame import DeviceFrame
 from base_qt.ui.form import (
     AngleSpec,
     BoolSpec,
     ConfigForm,
+    DirtyForm,
+    DirtyFormWidget,
     EnumSpec,
     FieldSpec,
     FloatSpec,
@@ -21,6 +24,7 @@ from base_qt.ui.status_board import StatusBoard  # available but not auto-wired
 __all__ = [
     "AppMessage",
     "BufferConsumerMixin",
+    "DeviceFrame",
     "MessageLevel",
     "LabMainWindow",
     "Panel",
@@ -34,6 +38,8 @@ __all__ = [
     "LengthControl",
     # form
     "ConfigForm",
+    "DirtyForm",
+    "DirtyFormWidget",
     "FieldSpec",
     "FloatSpec",
     "IntSpec",

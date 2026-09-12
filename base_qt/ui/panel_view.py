@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from PySide6.QtCore import QPoint, Qt, Signal
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import (
@@ -7,13 +9,14 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QScrollArea,
     QStyle,
     QVBoxLayout,
     QWidget,
 )
 
+from base_qt.ui.device_frame import DeviceFrame
 from base_qt.ui.panel_view_model import PanelViewModel
+from base_qt.ui.worker_control_widget import WorkerControlWidget
 
 
 class PanelView(QFrame):
@@ -71,38 +74,12 @@ class PanelView(QFrame):
 
         outer.addWidget(self._title_bar)
 
-        # Header — pinned below the title bar, above the scrollable body;
-        # hidden until a subclass uses it (e.g. Start/Pause controls), so
-        # popouts that never touch it don't get extra blank space.
-        self.header_widget = QWidget()
-        self.header_layout = QHBoxLayout(self.header_widget)
-        self.header_layout.setContentsMargins(8, 8, 8, 4)
-        self.header_layout.setSpacing(8)
-        self.header_widget.setVisible(False)
-        outer.addWidget(self.header_widget)
-
-        body = QWidget()
-        self.body_layout = QVBoxLayout(body)
-        self.body_layout.setContentsMargins(8, 8, 8, 8)
-        self.body_layout.setSpacing(8)
-
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QFrame.Shape.NoFrame)
-        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        scroll.setWidget(body)
-        outer.addWidget(scroll, stretch=1)
-
-        # Footer — pinned below the scrollable body; hidden until a subclass
-        # uses it (e.g. DirtyForm/ConfigForm's Apply button), so plain
-        # PanelView popouts that never touch it don't get extra blank space.
-        self.footer_widget = QWidget()
-        self.footer_layout = QHBoxLayout(self.footer_widget)
-        self.footer_layout.setContentsMargins(8, 4, 8, 8)
-        self.footer_layout.setSpacing(8)
-        self.footer_widget.setVisible(False)
-        outer.addWidget(self.footer_widget)
+        # The device frame does the actual work — pinned header, scrolling body, pinned
+        # footer. Scrollable here because a popout is one device in a window the operator
+        # can drag down to nothing, and Start/Stop must survive that. It is the only
+        # stretched child, so the title bar and resize handle keep their sizeHint.
+        self._frame = DeviceFrame(scrollable=True)
+        outer.addWidget(self._frame, stretch=1)
 
         # Resize handle — always visible; lets the user drag to adjust
         # height only (width is fixed to content in open()). QSizeGrip isn't
@@ -122,6 +99,32 @@ class PanelView(QFrame):
     @property
     def vm(self) -> PanelViewModel | None:
         return self.__dict__.get("vm")
+
+    # -- the frame's slots, forwarded so subclasses read as they always have ------------
+
+    @property
+    def header_widget(self) -> QWidget:
+        return self._frame.header_widget
+
+    @property
+    def header_layout(self) -> QHBoxLayout:
+        return self._frame.header_layout
+
+    @property
+    def body_layout(self) -> QVBoxLayout:
+        return self._frame.body_layout
+
+    @property
+    def footer_widget(self) -> QWidget:
+        return self._frame.footer_widget
+
+    @property
+    def footer_layout(self) -> QHBoxLayout:
+        return self._frame.footer_layout
+
+    def add_worker_controls(self, vm: Any) -> WorkerControlWidget:
+        """Pin this device's Start/Pause bar in the header, centered. See DeviceFrame."""
+        return self._frame.add_worker_controls(vm)
 
     def _on_close(self) -> None:
         if self.vm is not None:
@@ -152,7 +155,7 @@ class PanelView(QFrame):
         DirtyForm's footer). isHidden() reflects the widget's own explicit
         shown/hidden flag regardless of its ancestors' current visibility.
         """
-        body = self.body_layout.parentWidget()
+        body = self._frame.body
         h = self._title_bar.sizeHint().height() + body.sizeHint().height() + self._resize_handle.height()
         if not self.header_widget.isHidden():
             h += self.header_widget.sizeHint().height()
@@ -167,7 +170,7 @@ class PanelView(QFrame):
         # required width and forces an unwanted horizontal scrollbar too.
         # Recomputed every open() so it stays correct even if a subclass adds
         # header/footer content after construction.
-        body = self.body_layout.parentWidget()
+        body = self._frame.body
         sb_extent = self.style().pixelMetric(QStyle.PixelMetric.PM_ScrollBarExtent)
         content_widths = [body.sizeHint().width()]
         # isHidden(), not isVisible() — see _natural_height()'s docstring:

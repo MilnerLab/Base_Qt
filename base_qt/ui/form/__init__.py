@@ -1,5 +1,5 @@
 from base_qt.ui.form.config_form import ConfigForm
-from base_qt.ui.form.dirty_form import DirtyForm
+from base_qt.ui.form.dirty_form import DirtyForm, DirtyFormWidget
 from base_qt.ui.form.readout_view import ReadoutView
 from base_qt.ui.form.readouts import BoolReadout, Readout, ValueReadout
 from base_qt.ui.form.specs import (
@@ -21,6 +21,7 @@ from base_qt.ui.form.specs import (
 __all__ = [
     "ConfigForm",
     "DirtyForm",
+    "DirtyFormWidget",
     "FieldSpec",
     "FloatSpec",
     "IntSpec",

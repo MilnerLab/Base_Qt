@@ -12,11 +12,15 @@ T = TypeVar("T", bound=PanelView)
 
 class ViewHost(Generic[T]):
     """
-    Lazily resolves a PanelView-family view from a container factory,
-    reparenting it under `parent`. When the user closes the view, its
-    ViewModel's subscriptions are torn down (PanelView._on_close ->
-    vm.on_close()) and the widget is deleted; the next open() resolves a
-    fresh View/ViewModel pair from the container factory.
+    Lazily resolves a PanelView-family view from the container, reparenting it
+    under `parent`. Works for both registration styles:
+
+    - A view registered as a FACTORY and built with ``vm=`` is destroyed when
+      the user closes it (PanelView._on_close -> vm.on_close() + deleteLater).
+      The next open() resolves a fresh View/ViewModel pair.
+    - A view registered as a SINGLETON and built without ``vm=`` -- the device
+      views, whose ViewModel is shared with the Devices page -- is only hidden
+      on close. The next open() re-shows that same widget.
 
     Usage:
         host = ViewHost(container, ELL14RotatorView, parent=self)
@@ -33,9 +37,14 @@ class ViewHost(Generic[T]):
         if self._view is None:
             view = self._container.get(self._view_type)
             view.setParent(self._parent)
-            view.closed.connect(self._on_closed)
+            # destroyed, not closed: `closed` fires for a hide-only close too, which
+            # would drop a singleton view we should keep -- and the next open() would
+            # then re-resolve the same object and stack a second connection on it.
+            # destroyed fires only when the widget really is gone, which is exactly
+            # when the reference must be dropped.
+            view.destroyed.connect(self._on_destroyed)
             self._view = view
         self._view.open()
 
-    def _on_closed(self) -> None:
+    def _on_destroyed(self) -> None:
         self._view = None

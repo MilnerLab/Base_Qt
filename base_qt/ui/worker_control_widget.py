@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Any, Callable
 
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QSizePolicy, QWidget
 
@@ -107,3 +107,26 @@ class WorkerControlWidget(QWidget):
 
         self._right_btn.setEnabled(not busy and (running or paused))  # RUNNING or PAUSED
         self._right_btn.setText("Stop" if paused else "Pause")
+
+
+def attach_worker_controls(vm: Any, parent: QWidget | None = None) -> WorkerControlWidget:
+    """Build a bar wired to a device panel view model, in one call.
+
+    ``vm`` is a ``DevicePanelViewModel`` that also carries the worker lifecycle:
+    ``start``/``pause``/``resume``/``stop``, a ``worker_status`` property and a
+    ``worker_state_changed`` signal. Only the connection-mode half of that contract is
+    declared on the base class -- the lifecycle half is a convention every device VM
+    follows, hence the loose annotation.
+
+    Both halves are SEEDED from the current value and then connected, never merely
+    connected: a panel opened from the Devices menu long after the device started has
+    already missed the events it would otherwise be waiting for, and no further one is
+    coming. That applies to the mock badge in particular -- the demotion it must show
+    happened at startup.
+    """
+    ctrl = WorkerControlWidget(vm.start, vm.pause, vm.resume, vm.stop, parent=parent)
+    ctrl.set_status(vm.worker_status)
+    vm.worker_state_changed.connect(ctrl.set_status)
+    ctrl.set_mode(vm.connection_mode, vm.connection_reason)
+    vm.connection_mode_changed.connect(ctrl.set_mode)
+    return ctrl
