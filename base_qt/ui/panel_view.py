@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from PySide6.QtCore import QPoint, Qt, Signal
+from PySide6.QtCore import QEvent, QObject, QPoint, QRect, Qt, Signal
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import (
     QFrame,
@@ -93,6 +93,11 @@ class PanelView(QFrame):
         outer.addWidget(self._resize_handle)
         self._resize_offset_y: int | None = None
         self._resize_start_height: int | None = None
+
+        # Keep the popout inside the visible part of the parent when the parent resizes.
+        # Without this, shrinking the window leaves the popout's lower edge -- and with it
+        # the resize handle and the last rows -- clipped off where no drag can reach.
+        parent.installEventFilter(self)
 
         self.hide()
 
@@ -185,16 +190,65 @@ class PanelView(QFrame):
         natural_h = self._natural_height()
         p = self.parentWidget()
         if p is not None:
-            margin = 24
-            max_h = max(100, p.height() - margin)
+            area = self._visible_area()
+            # Open at most OPEN_FRACTION of the visible height, so the lower edge and its
+            # resize handle always start well inside view; drag down for more.
+            max_h = max(self._MIN_H, int(area.height() * self._OPEN_FRACTION))
             self.resize(self.width(), min(natural_h, max_h))
-            x = max(0, (p.width()  - self.width())  // 2)
-            y = max(0, (p.height() - self.height()) // 2)
+            x = max(0, area.x() + (area.width()  - self.width())  // 2)
+            y = max(0, area.y() + (area.height() - self.height()) // 2)
             self.move(x, y)
         else:
             self.resize(self.width(), natural_h)
         self.show()
         self.raise_()
+
+    _MIN_H = 100
+    _OPEN_FRACTION = 0.75
+    _MARGIN = 8
+
+    def _visible_area(self) -> QRect:
+        """The part of the parent the operator can actually see, in parent coordinates.
+
+        NOT ``parent.rect()``: a parent taller than the screen (a window extending past the
+        taskbar, a dock clipped by its main window) has a height nobody can see, and sizing
+        against it put the popout's bottom rows and resize handle off-view -- the scroll area
+        believed everything was shown, so there was nothing left to scroll to.
+        """
+        p = self.parentWidget()
+        assert p is not None
+        area = p.rect()
+        if p.isVisible():
+            clip = p.visibleRegion().boundingRect()
+            if not clip.isEmpty():
+                area = area.intersected(clip)
+        screen = p.screen()
+        if screen is not None:
+            g = screen.availableGeometry()
+            on_screen = QRect(p.mapFromGlobal(g.topLeft()), p.mapFromGlobal(g.bottomRight()))
+            clipped = area.intersected(on_screen)
+            if not clipped.isEmpty():
+                area = clipped
+        return area.adjusted(0, 0, 0, -self._MARGIN)
+
+    def _fit_into_visible_area(self) -> None:
+        """Pull the popout back inside the visible area, shrinking it if it cannot fit."""
+        if self.parentWidget() is None or not self.isVisible():
+            return
+        area = self._visible_area()
+        h = max(self._MIN_H, min(self.height(), area.height()))
+        if h != self.height():
+            self.resize(self.width(), h)
+        x = max(area.left(), min(self.x(), area.right() + 1 - self.width()))
+        y = max(area.top(), min(self.y(), area.bottom() + 1 - self.height()))
+        if (x, y) != (self.x(), self.y()):
+            self.move(max(0, x), max(0, y))
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:
+        if watched is self.parentWidget() and event.type() in (QEvent.Type.Resize,
+                                                               QEvent.Type.Move):
+            self._fit_into_visible_area()
+        return super().eventFilter(watched, event)
 
     # ── drag handling (title bar only) ──────────────────────────────────
 
@@ -211,21 +265,22 @@ class PanelView(QFrame):
         if self._resize_offset_y is not None and event.buttons() & Qt.MouseButton.LeftButton:
             delta = event.pos().y() - self._resize_offset_y
             p = self.parentWidget()
-            min_h = 100
             # Cap growth at the content's natural (uncompressed) height — i.e.
             # never drag past the point where the vertical scrollbar
-            # disappears, and never past the parent's bottom edge either,
-            # whichever is smaller.
+            # disappears, and never past the VISIBLE bottom edge of the parent
+            # either, whichever is smaller — past it the handle is unreachable.
             natural_h = self._natural_height()
-            max_h = min(p.height() - self.y(), natural_h) if p is not None else natural_h
-            new_h = max(min_h, min(self._resize_start_height + delta, max_h))
+            max_h = (min(self._visible_area().bottom() + 1 - self.y(), natural_h)
+                     if p is not None else natural_h)
+            new_h = max(self._MIN_H, min(self._resize_start_height + delta, max_h))
             self.resize(self.width(), new_h)
         elif self._drag_offset is not None and event.buttons() & Qt.MouseButton.LeftButton:
             new_pos = self.pos() + event.pos() - self._drag_offset
             p = self.parentWidget()
             if p is not None:
+                area = self._visible_area()
                 x = max(0, min(new_pos.x(), p.width()  - self.width()))
-                y = max(0, min(new_pos.y(), p.height() - self.height()))
+                y = max(0, min(new_pos.y(), area.bottom() + 1 - self.height()))
                 self.move(x, y)
         super().mouseMoveEvent(event)
 
