@@ -45,7 +45,7 @@ class PanelView(QFrame):
 
     closed = Signal()
 
-    def __init__(self, title: str, parent: QWidget, *, vm: PanelViewModel | None = None) -> None:
+    def __init__(self, title: str, parent: QWidget | None, *, vm: PanelViewModel | None = None) -> None:
         super().__init__(parent)
         self.__dict__["vm"] = vm
         self.setObjectName("Card")
@@ -94,10 +94,8 @@ class PanelView(QFrame):
         self._resize_offset_y: int | None = None
         self._resize_start_height: int | None = None
 
-        # Keep the popout inside the visible part of the parent when the parent resizes.
-        # Without this, shrinking the window leaves the popout's lower edge -- and with it
-        # the resize handle and the last rows -- clipped off where no drag can reach.
-        parent.installEventFilter(self)
+        self._watched_parent: QWidget | None = None
+        self._watch_parent()
 
         self.hide()
 
@@ -243,6 +241,33 @@ class PanelView(QFrame):
         y = max(area.top(), min(self.y(), area.bottom() + 1 - self.height()))
         if (x, y) != (self.x(), self.y()):
             self.move(max(0, x), max(0, y))
+
+    def _watch_parent(self) -> None:
+        """Point the resize/move filter at the current parent.
+
+        Keeps the popout inside the visible part of the parent when the parent resizes.
+        Without this, shrinking the window leaves the popout's lower edge -- and with it
+        the resize handle and the last rows -- clipped off where no drag can reach.
+
+        Deferred rather than done once in __init__: a view resolved through ``ViewHost``
+        is built with parent=None and only reparented under the shell afterwards, so the
+        constructor has no parent to watch. Called again on every ParentChange, and it
+        drops the previous filter first -- a singleton view survives close/open and would
+        otherwise stack a filter per reparent.
+        """
+        p = self.parentWidget()
+        if p is self._watched_parent:
+            return
+        if self._watched_parent is not None:
+            self._watched_parent.removeEventFilter(self)
+        self._watched_parent = p
+        if p is not None:
+            p.installEventFilter(self)
+
+    def changeEvent(self, event: QEvent) -> None:
+        if event.type() == QEvent.Type.ParentChange:
+            self._watch_parent()
+        super().changeEvent(event)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if watched is self.parentWidget() and event.type() in (QEvent.Type.Resize,
