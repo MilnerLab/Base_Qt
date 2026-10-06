@@ -118,6 +118,24 @@ QPushButton[role="danger"], QToolButton[role="danger"] {
   border-width: 0px;
 }
 
+/* Segmented control: inner corners square, shared borders not doubled */
+QWidget#SegmentedControl QPushButton[segment="left"] {
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+QWidget#SegmentedControl QPushButton[segment="middle"] {
+  border-radius: 0px;
+  border-left-width: 0px;
+}
+QWidget#SegmentedControl QPushButton[segment="right"] {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-left-width: 0px;
+}
+QWidget#SegmentedControl QPushButton:checked {
+  font-weight: 600;
+}
+
 QAbstractButton#ToggleSwitch {
   min-width: 56px;
   min-height: 28px;

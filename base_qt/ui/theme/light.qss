@@ -115,6 +115,14 @@ QPushButton[role="danger"], QToolButton[role="danger"] {
 }
 
 /* default colors for ToggleSwitch */
+QWidget#SegmentedControl QPushButton:checked {
+  color: #FFFFFF;
+  background-color: rgba(30,120,255,220);
+}
+QWidget#SegmentedControl QPushButton:checked:disabled {
+  background-color: rgba(30,120,255,110);
+}
+
 QAbstractButton#ToggleSwitch {
   qproperty-trackOff: rgba(230,230,230,255);
   qproperty-trackBorder: rgba(0,0,0,55);
