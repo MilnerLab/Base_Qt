@@ -50,7 +50,6 @@ def save_theme_mode(mode: ThemeMode) -> None:
 
 def apply_theme(app: QApplication, mode: ThemeMode) -> None:
     mode_eff = effective_mode(app, mode)
-
     base = _load_qss("base.qss")
     themed = _load_qss("dark.qss" if mode_eff is ThemeMode.DARK else "light.qss")
 

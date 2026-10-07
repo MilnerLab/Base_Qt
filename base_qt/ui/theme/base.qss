@@ -2,17 +2,17 @@
 
 /* typography baseline */
 QWidget {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 /* Section headers / helper labels */
 QLabel[role="section_title"] {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
 }
 QLabel[role="muted"] { }
 QLabel[role="error"] {
-  font-size: 12px;
+  font-size: 14px;
 }
 QLabel[role="readout"] {
   min-height: @control_h@px;
@@ -144,7 +144,7 @@ QAbstractButton#ToggleSwitch {
 /* Panel header strip */
 QLabel#panel_header {
   font-weight: 600;
-  font-size: 12px;
+  font-size: 14px;
   padding: @s@px @m@px;
   border-bottom-width: @border_w@px;
   border-bottom-style: solid;
@@ -153,7 +153,7 @@ QLabel#panel_header {
 /* PanelView title bar */
 QWidget#popout_header {
   font-weight: 600;
-  font-size: 12px;
+  font-size: 14px;
   min-height: @xl@px;
   border-bottom-width: @border_w@px;
   border-bottom-style: solid;
@@ -165,16 +165,16 @@ QLabel#status_dot {
 }
 
 QLabel#status_text {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 QLabel#status_counter {
-  font-size: 11px;
+  font-size: 13px;
   min-width: 28px;
 }
 
 QToolButton#status_nav_btn {
-  font-size: 11px;
+  font-size: 13px;
   min-width: 18px;
   min-height: 18px;
   padding: 0px 2px;
