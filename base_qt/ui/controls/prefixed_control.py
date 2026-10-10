@@ -49,6 +49,10 @@ class PrefixedControl(ControlWithReadout, Generic[T]):
     Layout:  [spinbox]  [prefix▾]  unit_label
 
     Switching prefix rescales the displayed number so the physical value is preserved.
+
+    ``decimals`` and ``step`` are optional and given in ``default_prefix`` units; switching
+    prefix rescales both, so 1 µs at 0 decimals shows as 0.001 ms at 3. Left as None,
+    decimals adapt to the value (at least 4 significant digits) and the step is Qt's 1.0.
     """
 
     value_changed = Signal(float)
@@ -61,12 +65,18 @@ class PrefixedControl(ControlWithReadout, Generic[T]):
         min_base: float = -1e18,
         max_base: float = 1e18,
         parent: QWidget | None = None,
+        *,
+        decimals: int | None = None,
+        step: float | None = None,
     ) -> None:
         super().__init__(parent)
         self._prefixes = allowed_prefixes if allowed_prefixes is not None else DEFAULT_PREFIXES
         self._min_base = min_base
         self._max_base = max_base
         self._unit_label = unit_label
+        self._default_prefix = default_prefix
+        self._fixed_decimals = decimals
+        self._step_base = step * default_prefix.value if step is not None else None
 
         self._spinbox = QDoubleSpinBox()
         self._spinbox.setDecimals(6)
@@ -96,7 +106,7 @@ class PrefixedControl(ControlWithReadout, Generic[T]):
         """Show quantity in the currently selected prefix."""
         display = float(quantity) / self._prefix.value  # type: ignore[arg-type]
         self._spinbox.blockSignals(True)
-        self._spinbox.setDecimals(self._decimals_for(display))
+        self._spinbox.setDecimals(self._decimals(display))
         self._spinbox.setValue(display)
         self._spinbox.blockSignals(False)
 
@@ -106,13 +116,15 @@ class PrefixedControl(ControlWithReadout, Generic[T]):
     def set_readout(self, quantity: T) -> None:  # type: ignore[override]
         """Show the live current value, in the currently selected prefix."""
         display = float(quantity) / self._prefix.value  # type: ignore[arg-type]
-        text = f"{display:.{self._decimals_for(display)}f} {PREFIX_SYMBOLS[self._prefix]}{self._unit_label}"
+        text = f"{display:.{self._decimals(display)}f} {PREFIX_SYMBOLS[self._prefix]}{self._unit_label}"
         super().set_readout(text)
 
     def _update_range(self) -> None:
         lo = self._min_base / self._prefix.value
         hi = self._max_base / self._prefix.value
         self._spinbox.setRange(min(lo, hi), max(lo, hi))
+        if self._step_base is not None:
+            self._spinbox.setSingleStep(self._step_base / self._prefix.value)
 
     def _on_prefix_changed(self) -> None:
         old_val = self._spinbox.value()
@@ -122,9 +134,16 @@ class PrefixedControl(ControlWithReadout, Generic[T]):
         # Block signals before setRange so Qt cannot clamp mid-transition.
         self._spinbox.blockSignals(True)
         self._update_range()
-        self._spinbox.setDecimals(self._decimals_for(new_val))
+        self._spinbox.setDecimals(self._decimals(new_val))
         self._spinbox.setValue(new_val)
         self._spinbox.blockSignals(False)
+
+    def _decimals(self, value: float) -> int:
+        """Fixed decimals rescaled to the current prefix if given, else adaptive."""
+        if self._fixed_decimals is None:
+            return self._decimals_for(value)
+        shift = round(math.log10(self._default_prefix.value / self._prefix.value))
+        return max(0, min(self._fixed_decimals - shift, 15))
 
     @staticmethod
     def _decimals_for(value: float) -> int:

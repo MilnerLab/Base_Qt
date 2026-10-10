@@ -19,8 +19,12 @@ class TimeControl(PrefixedControl[Time]):
         min_s: float = 0.0,
         max_s: float = 1e18,
         parent: QWidget | None = None,
+        *,
+        decimals: int | None = None,
+        step: float | None = None,
     ) -> None:
-        super().__init__("s", default_prefix, allowed_prefixes, min_s, max_s, parent)
+        super().__init__("s", default_prefix, allowed_prefixes, min_s, max_s, parent,
+                         decimals=decimals, step=step)
 
     def _make(self, value: float, prefix: Prefix) -> Time:
         return Time(value, prefix)

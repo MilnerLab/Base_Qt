@@ -108,6 +108,15 @@ QPushButton, QToolButton {
   border-radius: @r_m@px;
 }
 
+/* Popout close button: fixed 20x20, so drop the generic button padding/min-height */
+QPushButton#popout_close {
+  min-height: 0px;
+  min-width: 0px;
+  padding: 0px;
+  border-width: 0px;
+  border-radius: 4px;
+}
+
 /* Role variants: only structural changes here */
 QPushButton[role="primary"], QToolButton[role="primary"] {
   font-weight: 600;

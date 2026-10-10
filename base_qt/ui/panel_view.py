@@ -67,6 +67,7 @@ class PanelView(QFrame):
         title_row.addWidget(lbl, stretch=1)
 
         close_btn = QPushButton("✕")
+        close_btn.setObjectName("popout_close")
         close_btn.setFixedSize(20, 20)
         close_btn.setFlat(True)
         close_btn.clicked.connect(self._on_close)

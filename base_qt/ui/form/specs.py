@@ -173,6 +173,14 @@ class LengthSpec(FieldSpec):
 
 
 class TimeSpec(FieldSpec):
+    """A Time field. min/max/decimals/step are all in ``default_prefix`` units.
+
+    A FieldSpec rather than a FloatSpec: it overrides every FloatSpec method and its
+    widget is a TimeControl, not a QDoubleSpinBox. decimals/step left as None keep the
+    control's adaptive decimals and Qt's default step. No suffix: the control already
+    shows the prefix and "s".
+    """
+
     def __init__(
         self,
         label: str,
@@ -180,15 +188,20 @@ class TimeSpec(FieldSpec):
         allowed_prefixes: list[Prefix] | None = None,
         min: float | None = None,
         max: float | None = None,
+        decimals: int | None = None,
+        step: float | None = None,
     ) -> None:
         super().__init__(label)
         self._default_prefix = default_prefix
         self._allowed_prefixes = allowed_prefixes
         self._min_s = min * float(default_prefix) if min is not None else 0.0
         self._max_s = max * float(default_prefix) if max is not None else 1e18
+        self._decimals = decimals
+        self._step = step
 
     def create_widget(self) -> TimeControl:
-        return TimeControl(self._default_prefix, self._allowed_prefixes, self._min_s, self._max_s)
+        return TimeControl(self._default_prefix, self._allowed_prefixes, self._min_s, self._max_s,
+                           decimals=self._decimals, step=self._step)
 
     def set_value(self, widget: TimeControl, value: Time) -> None:  # type: ignore[override]
         widget.set_time(value)
