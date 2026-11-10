@@ -28,7 +28,8 @@ class Panel(QWidget):
         super().__init__(parent)
         self.__dict__["vm"] = vm
         self._sigs: list[tuple] = []
-
+        
+        
         root = QVBoxLayout(self)
         root.setContentsMargins(0, 0, 0, 0)
         root.setSpacing(0)
@@ -38,6 +39,9 @@ class Panel(QWidget):
         root.addWidget(self._header)
 
         self.body = QWidget()
+        self.body.setObjectName("panel_body")
+        self.body.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.body.setStyleSheet("#panel_body { background-color: white; }")
         self.body_layout = QVBoxLayout(self.body)
         self.body_layout.setContentsMargins(8, 8, 8, 8)
         self.body_layout.setSpacing(8)
