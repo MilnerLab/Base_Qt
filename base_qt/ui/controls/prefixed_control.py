@@ -61,12 +61,14 @@ class PrefixedControl(ControlWithReadout, Generic[T]):
         min_base: float = -1e18,
         max_base: float = 1e18,
         parent: QWidget | None = None,
+        extra_decimals: int = 0,
     ) -> None:
         super().__init__(parent)
         self._prefixes = allowed_prefixes if allowed_prefixes is not None else DEFAULT_PREFIXES
         self._min_base = min_base
         self._max_base = max_base
         self._unit_label = unit_label
+        self._extra_decimals = extra_decimals
 
         self._spinbox = QDoubleSpinBox()
         self._spinbox.setDecimals(6)
@@ -126,10 +128,11 @@ class PrefixedControl(ControlWithReadout, Generic[T]):
         self._spinbox.setValue(new_val)
         self._spinbox.blockSignals(False)
 
-    @staticmethod
-    def _decimals_for(value: float) -> int:
+    def _decimals_for(self, value: float) -> int:
         """Return enough decimal places to show at least 4 significant digits."""
         if value == 0.0:
-            return 6
-        magnitude = math.floor(math.log10(abs(value)))
-        return max(2, min(-magnitude + 3, 15))
+            base_decimals = 6
+        else:
+            magnitude = math.floor(math.log10(abs(value)))
+            base_decimals = max(2, min(-magnitude + 3, 15))
+        return min(base_decimals + self._extra_decimals, 15)
