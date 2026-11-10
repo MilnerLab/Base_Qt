@@ -21,8 +21,9 @@ class LengthControl(PrefixedControl[Length]):
         min_m: float = -1e18,
         max_m: float = 1e18,
         parent: QWidget | None = None,
+        extra_decimals: int = 0,
     ) -> None:
-        super().__init__("m", default_prefix, allowed_prefixes, min_m, max_m, parent)
+        super().__init__("m", default_prefix, allowed_prefixes, min_m, max_m, parent, extra_decimals) #THIS SEEMS LIKE A BAD BIT OF CLAUDE CODE? WHY THIS WAY?
 
     def _make(self, value: float, prefix: Prefix) -> Length:
         return Length(value, prefix)

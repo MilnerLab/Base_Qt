@@ -146,6 +146,7 @@ class LengthSpec(FieldSpec):
         allowed_prefixes: list[Prefix] | None = None,
         min: float | None = None,
         max: float | None = None,
+        extra_decimals: int = 0,
     ) -> None:
         super().__init__(label)
         self._default_prefix = default_prefix
@@ -153,6 +154,7 @@ class LengthSpec(FieldSpec):
         # Store bounds in meters; min/max are given in default_prefix units.
         self._min_m = min * float(default_prefix) if min is not None else -1e18
         self._max_m = max * float(default_prefix) if max is not None else 1e18
+        self._extra_decimals = extra_decimals
 
     def create_widget(self) -> LengthControl:
         return LengthControl(
@@ -160,6 +162,7 @@ class LengthSpec(FieldSpec):
             self._allowed_prefixes,
             self._min_m,
             self._max_m,
+            extra_decimals=self._extra_decimals,
         )
 
     def set_value(self, widget: LengthControl, value: Length) -> None:  # type: ignore[override]
